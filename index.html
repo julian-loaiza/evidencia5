@@ -42,18 +42,29 @@
     td {
       padding: 15px;
       border-bottom: 1px solid #e0e4e8;
+      transition: all 0.3s ease;
+    }
+    tr {
+      transition: all 0.3s ease;
     }
     tr:nth-child(odd) {
       background-color: #f0f5f9;
     }
     tr:hover {
       background-color: #e4edf7;
-      transition: background-color 0.3s ease;
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      z-index: 10;
+      position: relative;
     }
     .emoji {
       font-size: 24px;
       margin-right: 10px;
       vertical-align: middle;
+      transition: transform 0.3s ease;
+    }
+    td:hover .emoji {
+      transform: scale(1.3);
     }
     .git-local {
       border-left: 5px solid #92c7cf;
@@ -65,104 +76,61 @@
       font-weight: bold;
       color: #3a506b;
     }
-    .info-button {
-      background-color: #6d9dc5;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 25px;
-      height: 25px;
-      cursor: pointer;
-      margin-left: 10px;
-      font-weight: bold;
-    }
-    .tooltip {
-      position: relative;
-      display: inline-block;
-    }
-    .tooltip .tooltip-text {
-      visibility: hidden;
-      width: 200px;
-      background-color: #3a506b;
-      color: white;
-      text-align: center;
-      border-radius: 6px;
-      padding: 10px;
-      position: absolute;
-      z-index: 1;
-      bottom: 125%;
-      left: 50%;
-      margin-left: -100px;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .tooltip:hover .tooltip-text {
-      visibility: visible;
-      opacity: 1;
-    }
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 20px;
     }
-    .toggle-container {
-      display: flex;
-      align-items: center;
+    .info-card {
+      display: none;
+      position: absolute;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      padding: 15px;
+      width: 250px;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      border-top: 4px solid #6d9dc5;
     }
-    .toggle-switch {
+    .cell-container {
+      position: relative;
+    }
+    .highlight-button {
+      background-color: #6d9dc5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 15px;
+      cursor: pointer;
+      margin-top: 20px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    .highlight-button:hover {
+      background-color: #5a89ad;
+      transform: scale(1.05);
+    }
+    .title-container {
       position: relative;
       display: inline-block;
-      width: 60px;
-      height: 34px;
-      margin-left: 10px;
+      transition: transform 0.3s ease;
     }
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: .4s;
-      border-radius: 34px;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-    input:checked + .slider {
-      background-color: #6d9dc5;
-    }
-    input:checked + .slider:before {
-      transform: translateX(26px);
+    .title-container:hover {
+      transform: scale(1.1);
     }
   </style>
 </head>
 <body>
 <div class="container">
   <div class="header">
-    <h1>Git Local vs Git Remoto</h1>
-    <div class="toggle-container">
-      <span>Modo Oscuro</span>
-      <label class="toggle-switch">
-        <input type="checkbox" id="theme-toggle">
-        <span class="slider"></span>
-      </label>
+    <div class="title-container">
+      <h1>Git Local vs Git Remoto</h1>
     </div>
+    <button class="highlight-button" id="highlight-differences">Resaltar Diferencias</button>
   </div>
 
   <div class="table-container">
@@ -221,68 +189,83 @@
 </div>
 
 <script>
-  // Función para el modo oscuro
-  const toggleSwitch = document.getElementById('theme-toggle');
-  toggleSwitch.addEventListener('change', function() {
-    if (this.checked) {
-      document.body.style.backgroundColor = '#2d3748';
-      document.querySelector('h1').style.color = '#e2e8f0';
-      document.querySelectorAll('.table-container').forEach(el => {
-        el.style.backgroundColor = '#1a202c';
+  // Función para resaltar diferencias
+  const highlightButton = document.getElementById('highlight-differences');
+  let isHighlighted = false;
+
+  highlightButton.addEventListener('click', function() {
+    const rows = document.querySelectorAll('tbody tr');
+
+    if (!isHighlighted) {
+      // Activar resaltado
+      rows.forEach(row => {
+        const localCell = row.querySelector('.git-local');
+        const remoteCell = row.querySelector('.git-remote');
+
+        localCell.style.backgroundColor = '#daeef1';
+        remoteCell.style.backgroundColor = '#f7e6f5';
+
+        localCell.style.borderLeftWidth = '8px';
+        remoteCell.style.borderLeftWidth = '8px';
       });
-      document.querySelectorAll('td, th').forEach(el => {
-        el.style.color = '#e2e8f0';
-      });
-      document.querySelectorAll('tr:nth-child(odd)').forEach(el => {
-        el.style.backgroundColor = '#2d3748';
-      });
-      document.querySelectorAll('tr:nth-child(even)').forEach(el => {
-        el.style.backgroundColor = '#1a202c';
-      });
-      document.querySelectorAll('tr:hover').forEach(el => {
-        el.style.backgroundColor = '#4a5568';
-      });
+
+      highlightButton.textContent = 'Quitar Resaltado';
+      isHighlighted = true;
     } else {
-      document.body.style.backgroundColor = '#f5f7fa';
-      document.querySelector('h1').style.color = '#3a506b';
-      document.querySelector('.table-container').style.backgroundColor = 'white';
-      document.querySelectorAll('td, .feature').forEach(el => {
-        el.style.color = '';
+      // Desactivar resaltado
+      rows.forEach(row => {
+        const localCell = row.querySelector('.git-local');
+        const remoteCell = row.querySelector('.git-remote');
+
+        localCell.style.backgroundColor = '';
+        remoteCell.style.backgroundColor = '';
+
+        localCell.style.borderLeftWidth = '5px';
+        remoteCell.style.borderLeftWidth = '5px';
       });
-      document.querySelectorAll('tr:nth-child(odd)').forEach(el => {
-        el.style.backgroundColor = '#f0f5f9';
-      });
-      document.querySelectorAll('tr:nth-child(even)').forEach(el => {
-        el.style.backgroundColor = 'white';
-      });
+
+      highlightButton.textContent = 'Resaltar Diferencias';
+      isHighlighted = false;
     }
   });
 
-  // Añadir efecto hover a las filas
-  const rows = document.querySelectorAll('tr');
-  rows.forEach(row => {
-    row.addEventListener('mouseover', function() {
-      if (toggleSwitch.checked) {
-        this.style.backgroundColor = '#4a5568';
-      } else {
-        this.style.backgroundColor = '#e4edf7';
+  // Efecto de zoom para los emojis
+  document.querySelectorAll('.emoji').forEach(emoji => {
+    emoji.addEventListener('mouseenter', function() {
+      this.style.transform = 'scale(1.6)';
+      this.style.display = 'inline-block';
+    });
+
+    emoji.addEventListener('mouseleave', function() {
+      this.style.transform = 'scale(1)';
+    });
+  });
+
+  // Efecto de zoom para las celdas individuales
+  document.querySelectorAll('td').forEach(cell => {
+    cell.addEventListener('mouseenter', function() {
+      if (!this.classList.contains('feature')) {
+        this.style.transform = 'scale(1.05)';
+        this.style.zIndex = '5';
+        this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
       }
     });
-    row.addEventListener('mouseout', function() {
-      if (toggleSwitch.checked) {
-        if (this.rowIndex % 2 === 1) {
-          this.style.backgroundColor = '#2d3748';
-        } else {
-          this.style.backgroundColor = '#1a202c';
-        }
-      } else {
-        if (this.rowIndex % 2 === 1) {
-          this.style.backgroundColor = '#f0f5f9';
-        } else {
-          this.style.backgroundColor = '';
-        }
-      }
+
+    cell.addEventListener('mouseleave', function() {
+      this.style.transform = '';
+      this.style.zIndex = '';
+      this.style.boxShadow = '';
     });
+  });
+
+  // Título interactivo
+  const title = document.querySelector('.title-container');
+  title.addEventListener('mouseenter', function() {
+    this.style.transform = 'scale(1.1)';
+  });
+
+  title.addEventListener('mouseleave', function() {
+    this.style.transform = '';
   });
 </script>
 </body>
