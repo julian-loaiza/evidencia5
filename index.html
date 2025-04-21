@@ -1,33 +1,289 @@
-<!doctype html>
-<html class="no-js" lang="">
-
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
-  <link rel="stylesheet" href="css/style.css">
-  <meta name="description" content="">
-
-  <meta property="og:title" content="">
-  <meta property="og:type" content="">
-  <meta property="og:url" content="">
-  <meta property="og:image" content="">
-  <meta property="og:image:alt" content="">
-
-  <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon.png">
-
-  <link rel="manifest" href="site.webmanifest">
-  <meta name="theme-color" content="#fafafa">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Local vs Git Remoto</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #3a506b;
+      text-align: center;
+      margin-bottom: 30px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .table-container {
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      background-color: white;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+    th {
+      background-color: #6d9dc5;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-size: 18px;
+    }
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #e0e4e8;
+    }
+    tr:nth-child(odd) {
+      background-color: #f0f5f9;
+    }
+    tr:hover {
+      background-color: #e4edf7;
+      transition: background-color 0.3s ease;
+    }
+    .emoji {
+      font-size: 24px;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    .git-local {
+      border-left: 5px solid #92c7cf;
+    }
+    .git-remote {
+      border-left: 5px solid #e6aace;
+    }
+    .feature {
+      font-weight: bold;
+      color: #3a506b;
+    }
+    .info-button {
+      background-color: #6d9dc5;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      cursor: pointer;
+      margin-left: 10px;
+      font-weight: bold;
+    }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: #3a506b;
+      color: white;
+      text-align: center;
+      border-radius: 6px;
+      padding: 10px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .toggle-container {
+      display: flex;
+      align-items: center;
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+      margin-left: 10px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #6d9dc5;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+  </style>
 </head>
-
 <body>
+<div class="container">
+  <div class="header">
+    <h1>Git Local vs Git Remoto</h1>
+    <div class="toggle-container">
+      <span>Modo Oscuro</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="theme-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
 
-  <!-- Add your site or application content here -->
-  <p>Hello world! This is HTML5 Boilerplate. modificado</p>
-  <script src="js/app.js"></script>
+  <div class="table-container">
+    <table id="git-table">
+      <thead>
+      <tr>
+        <th>Característica</th>
+        <th>Git Local 💻</th>
+        <th>Git Remoto 🌐</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td class="feature">Ubicación</td>
+        <td class="git-local"><span class="emoji">💾</span> Almacenado en el equipo local del desarrollador</td>
+        <td class="git-remote"><span class="emoji">☁️</span> Alojado en un servidor o plataforma externa (GitHub, GitLab, Bitbucket, etc.)</td>
+      </tr>
+      <tr>
+        <td class="feature">Accesibilidad</td>
+        <td class="git-local"><span class="emoji">🔒</span> Accesible solo desde el equipo donde está instalado</td>
+        <td class="git-remote"><span class="emoji">🌍</span> Accesible desde cualquier lugar con conexión a internet</td>
+      </tr>
+      <tr>
+        <td class="feature">Colaboración</td>
+        <td class="git-local"><span class="emoji">👤</span> Limitada a un solo usuario</td>
+        <td class="git-remote"><span class="emoji">👥</span> Permite trabajar en equipo y compartir código</td>
+      </tr>
+      <tr>
+        <td class="feature">Comandos principales</td>
+        <td class="git-local"><span class="emoji">⌨️</span> git init, git add, git commit, git branch</td>
+        <td class="git-remote"><span class="emoji">🔄</span> git clone, git push, git pull, git fetch</td>
+      </tr>
+      <tr>
+        <td class="feature">Respaldo</td>
+        <td class="git-local"><span class="emoji">⚠️</span> Vulnerable a pérdidas si el dispositivo falla</td>
+        <td class="git-remote"><span class="emoji">💪</span> Funciona como copia de seguridad del proyecto</td>
+      </tr>
+      <tr>
+        <td class="feature">Visibilidad</td>
+        <td class="git-local"><span class="emoji">🔍</span> Solo visible para el propietario local</td>
+        <td class="git-remote"><span class="emoji">👁️</span> Puede ser público o privado según configuración</td>
+      </tr>
+      <tr>
+        <td class="feature">Funcionalidades adicionales</td>
+        <td class="git-local"><span class="emoji">🧰</span> Control de versiones básico</td>
+        <td class="git-remote"><span class="emoji">🛠️</span> Issues, Pull Requests, Code Review, CI/CD</td>
+      </tr>
+      <tr>
+        <td class="feature">Conexión</td>
+        <td class="git-local"><span class="emoji">🔌</span> No requiere conexión a internet</td>
+        <td class="git-remote"><span class="emoji">📶</span> Requiere conexión a internet para sincronizar</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
+<script>
+  // Función para el modo oscuro
+  const toggleSwitch = document.getElementById('theme-toggle');
+  toggleSwitch.addEventListener('change', function() {
+    if (this.checked) {
+      document.body.style.backgroundColor = '#2d3748';
+      document.querySelector('h1').style.color = '#e2e8f0';
+      document.querySelectorAll('.table-container').forEach(el => {
+        el.style.backgroundColor = '#1a202c';
+      });
+      document.querySelectorAll('td, th').forEach(el => {
+        el.style.color = '#e2e8f0';
+      });
+      document.querySelectorAll('tr:nth-child(odd)').forEach(el => {
+        el.style.backgroundColor = '#2d3748';
+      });
+      document.querySelectorAll('tr:nth-child(even)').forEach(el => {
+        el.style.backgroundColor = '#1a202c';
+      });
+      document.querySelectorAll('tr:hover').forEach(el => {
+        el.style.backgroundColor = '#4a5568';
+      });
+    } else {
+      document.body.style.backgroundColor = '#f5f7fa';
+      document.querySelector('h1').style.color = '#3a506b';
+      document.querySelector('.table-container').style.backgroundColor = 'white';
+      document.querySelectorAll('td, .feature').forEach(el => {
+        el.style.color = '';
+      });
+      document.querySelectorAll('tr:nth-child(odd)').forEach(el => {
+        el.style.backgroundColor = '#f0f5f9';
+      });
+      document.querySelectorAll('tr:nth-child(even)').forEach(el => {
+        el.style.backgroundColor = 'white';
+      });
+    }
+  });
+
+  // Añadir efecto hover a las filas
+  const rows = document.querySelectorAll('tr');
+  rows.forEach(row => {
+    row.addEventListener('mouseover', function() {
+      if (toggleSwitch.checked) {
+        this.style.backgroundColor = '#4a5568';
+      } else {
+        this.style.backgroundColor = '#e4edf7';
+      }
+    });
+    row.addEventListener('mouseout', function() {
+      if (toggleSwitch.checked) {
+        if (this.rowIndex % 2 === 1) {
+          this.style.backgroundColor = '#2d3748';
+        } else {
+          this.style.backgroundColor = '#1a202c';
+        }
+      } else {
+        if (this.rowIndex % 2 === 1) {
+          this.style.backgroundColor = '#f0f5f9';
+        } else {
+          this.style.backgroundColor = '';
+        }
+      }
+    });
+  });
+</script>
 </body>
-
 </html>
